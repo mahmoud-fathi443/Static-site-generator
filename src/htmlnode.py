@@ -49,5 +49,6 @@ class ParentNode(HTMLNode):
             for node in self.children:
                 str += node.to_html()
             str += f'</{self.tag}>'
+            str += "\n"
             return str
         
