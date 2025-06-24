@@ -5,7 +5,7 @@ from split_nodes_delimiter import *
 from block import *
 import os
 import shutil
-
+import sys
 
 
 def text_to_textnodes(text):
@@ -51,7 +51,7 @@ def extract_title(markdown):
     return md_title[1:].strip()
 
 
-def generate_page(from_path, tempelate_path, dest_path):
+def generate_page(from_path, tempelate_path, dest_path, basepath):
     print(f"Generating page from {from_path} to {dest_path} using {tempelate_path}")
     mk_file = open(from_path)
     md_text = mk_file.read()
@@ -65,12 +65,15 @@ def generate_page(from_path, tempelate_path, dest_path):
 
     page = temp_text.replace("{{ Title }}", page_title)
     page = page.replace("{{ Content }}", html_string)
+    page = page.replace("href=\"/", f"href=\"{basepath}\"")
+    page = page.replace("src=\"/", f"src=\"{basepath}\"")
+
 
     with open(dest_path, 'w') as f:
         f.write(page)
 
 
-def generate_pages_recursive(dir_path_content, template_path, dest_dir_path):
+def generate_pages_recursive(dir_path_content, template_path, dest_dir_path, basepath):
 
     for f in os.listdir(dir_path_content):
         src_f = os.path.join(dir_path_content, f)
@@ -78,10 +81,10 @@ def generate_pages_recursive(dir_path_content, template_path, dest_dir_path):
         if os.path.isfile(src_f):
             f = f.split(".")[0] + ".html"
             dest_path = os.path.join(dest_dir_path, f)
-            generate_page(src_f, template_path, dest_path)
+            generate_page(src_f, template_path, dest_path, basepath)
         else:
             os.mkdir(dest_path)
-            generate_pages_recursive(src_f, template_path, dest_path)
+            generate_pages_recursive(src_f, template_path, dest_path, basepath)
 
 
 
@@ -95,13 +98,18 @@ def generate_pages_recursive(dir_path_content, template_path, dest_dir_path):
 
 
 def main():
+    basepath = "/"
+    if len(sys.argv) == 2:
+        basepath = sys.argv[1]
+
+    
     markdown_dir_path = "content"
     tempelate_path = "tempelate.html"
-    dest_dir_path = "public"
+    dest_dir_path = "docs"
 
-    generate_public_files("static", "public")
+    generate_public_files("static", "docs")
     
-    generate_pages_recursive(markdown_dir_path, tempelate_path, dest_dir_path)
+    generate_pages_recursive(markdown_dir_path, tempelate_path, dest_dir_path, basepath)
 
 
 
