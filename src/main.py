@@ -65,8 +65,8 @@ def generate_page(from_path, tempelate_path, dest_path, basepath):
 
     page = temp_text.replace("{{ Title }}", page_title)
     page = page.replace("{{ Content }}", html_string)
-    page = page.replace("href=\"/", f"href=\"{basepath}")
-    page = page.replace("src=\"/", f"src=\"{basepath}")
+    page = page.replace("href=\"/", f"href=\"{basepath}/")
+    page = page.replace("src=\"/", f"src=\"{basepath}/")
 
 
     with open(dest_path, 'w') as f:
